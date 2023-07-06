@@ -1,0 +1,63 @@
+volumes:
+
+	mariadb-volume:
+		driver: local
+		driver_opts:
+			type: none
+			o: bind
+			device: /home/aradice/data/mariadb
+	wordpress-volume:
+		driver: local
+		driver_opts:
+			type: none
+			o: bind
+			device: /home/aradice/data/wordpress
+
+
+services:
+
+	wordpress:
+		container_name: wordpress
+		build: ./requirements/wordpress
+		restart: on-failure
+		volumes:
+			- wordpress-volume/var/www/html
+		depends_on:
+			- mariadb
+		networks:
+			- inception
+		env_file: 
+		- .env
+
+	mariadb:
+		container_name: mariadb
+		build: ./requirements/mariadb
+		restart: on-failure
+		ports:
+			- "9000:9000"
+		networks:
+			- inception
+		volumes: 
+			- mariadb-volume:/var/lib/mysql
+		env_file: 
+			- .env
+
+	nginx:
+		container_name: nginx
+		build: ./requirements/nginx
+		restart: on-failure
+		volumes:
+			- wordpress-volume:/var/www/html
+		depends_on:
+			- wordpress
+		ports:
+			- "443:443"
+		networks:
+			- inception
+
+
+networks:
+
+	inception:
+		name : inception
+		driver : bridge
