@@ -1,63 +1,71 @@
+version: "3.8"
+
 volumes:
-
-	mariadb-volume:
-		driver: local
-		driver_opts:
-			type: none
-			o: bind
-			device: /home/aradice/data/mariadb
-	wordpress-volume:
-		driver: local
-		driver_opts:
-			type: none
-			o: bind
-			device: /home/aradice/data/wordpress
-
-
-services:
-
-	wordpress:
-		container_name: wordpress
-		build: ./requirements/wordpress
-		restart: on-failure
-		volumes:
-			- wordpress-volume/var/www/html
-		depends_on:
-			- mariadb
-		networks:
-			- inception
-		env_file: 
-		- .env
-
-	mariadb:
-		container_name: mariadb
-		build: ./requirements/mariadb
-		restart: on-failure
-		ports:
-			- "9000:9000"
-		networks:
-			- inception
-		volumes: 
-			- mariadb-volume:/var/lib/mysql
-		env_file: 
-			- .env
-
-	nginx:
-		container_name: nginx
-		build: ./requirements/nginx
-		restart: on-failure
-		volumes:
-			- wordpress-volume:/var/www/html
-		depends_on:
-			- wordpress
-		ports:
-			- "443:443"
-		networks:
-			- inception
-
+  wordpress_vol:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/aradice/data/wordpress
+      o: bind
+  mariadb_vol:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/aradice/data/mariadb
+      o: bind
 
 networks:
+  inception:
+    driver: bridge
 
-	inception:
-		name : inception
-		driver : bridge
+services:
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    image: wordpress
+    restart: always
+    volumes:
+      - wordpress_vol:/var/www/
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"
+    networks:
+      - inception
+
+  
+  mariadb:
+    image: mariadb
+    restart: always
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - mariadb_vol:/var/lib/mysql
+    environment:
+      - MDB_DBNAME
+      - MDB_USER
+      - MDB_USER_PASS
+      - MDB_ROOT_USER
+      - MDB_ROOT_PASS
+    ports:
+      - 3306:3306
+    networks:
+      - inception
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    restart: always
+    build: requirements/nginx
+    volumes:
+      - wordpress_vol:/var/www/
+    depends_on:
+      - wordpress
+    env_file:
+      - .env
+    ports:
+      - "443:443"
+    networks:
+      - inception
