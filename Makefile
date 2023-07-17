@@ -1,46 +1,25 @@
-NAME= inception
+all: build
+	mkdir -p /home/aradice/data/wordpress
+	mkdir -p /home/aradice/data/mariadb
 
-all:
-	@mkdir -p /home/aradice/data/mariadb
-	@mkdir -p /home/aradice/data/wordpress
-	@docker-compose -f srcs/docker-compose.yml up --build -d
+build:
+	docker-compose -f srcs/docker-compose.yml up -d --build 
 
 up:
-	@mkdir -p /home/aradice/data/mariadb
-	@mkdir -p /home/aradice/data/wordpress
-	@docker-compose -f srcs/docker-compose.yml up -d
+	mkdir -p /home/aradice/data/wordpress
+	mkdir -p /home/aradice/data/mariadb
+	docker-compose -f srcs/docker-compose.yml up -d
 
 down:
-	@docker-compose -f srcs/docker-compose.yml down
+	docker-compose -f srcs/docker-compose.yml down
 
-clean:
-	@docker stop nginx
-	@docker stop mariadb
-	@docker stop wordpress
-	@docker rm nginx
-	@docker rm mariadb
-	@docker rm wordpress
-	@docker rmi nginx
-	@docker rmi mariadb
-	@docker rmi wordpress
-	@docker volume rm srcs_mariadb_vol
-	@docker volume rm srcs_wordpress_vol
-	@docker network rm srcs_inception
-	@docker system prune -f
-	@sudo rm -rf /home/aradice/data/wordpress
-	@sudo rm -rf /home/aradice/data/mariadb
+fclean:
+	docker stop $$(docker ps -qa) || true
+	docker rm $$(docker ps -qa) || true
+	docker rmi -f $$(docker images -qa) || true
+	docker volume rm $$(docker volume ls -q) || true
+	docker system prune -f
+	sudo rm -rf /home/aradice/data/wordpress
+	sudo rm -rf /home/aradice/data/mariadb
 
-info:
-	@echo "=============================== IMAGES ==============================="
-	@docker images
-	@echo
-	@echo "============================= CONTAINERS ============================="
-	@docker ps -a
-	@echo
-	@echo "=============== NETWORKS ==============="
-	@docker network ls
-	@echo
-	@echo "====== VOLUMES ======"
-	@docker volume ls
-
-.PHONY:	all up down clean info
+.PHONY:	all up down fclean

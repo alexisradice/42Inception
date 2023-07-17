@@ -12,9 +12,9 @@ RUN mkdir -p /var/www/inception/wordpress
 
 EXPOSE 9000
 
-COPY /tools/entrypoint.sh /tmp
+COPY /tools/entrypoint.sh /
 COPY /conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
 
-ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 
 CMD ["php-fpm7.3", "-F"]

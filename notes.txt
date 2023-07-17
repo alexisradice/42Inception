@@ -1,0 +1,8 @@
+images
+docker images
+containers
+docker ps -a
+networks
+docker network ls
+volumes
+docker volume ls
