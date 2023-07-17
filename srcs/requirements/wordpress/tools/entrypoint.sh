@@ -1,6 +1,6 @@
 cd /var/www/inception
 
-wp core download  --path="/var/www/inception" --allow-root
+wp core download --path="/var/www/inception" --allow-root
 
 wp config create --path="/var/www/inception" --dbhost=$MDB_HOST --dbname=$MDB_DBNAME --dbuser=$MDB_USER --dbpass=$MDB_USER_PASS --dbprefix=wp_ --allow-root
 
@@ -8,7 +8,7 @@ wp core install --path="/var/www/inception" --title="Inception" --url=$URL --adm
 
 wp plugin update --all --allow-root
 
-wp user create --path="/var/www/inception" --allow-root $WP_USER $WP_EMAIL --user_pass=$WP_USER_PASS
+wp user create --path="/var/www/inception" $WP_USER $WP_EMAIL --user_pass=$WP_USER_PASS --allow-root
 
 chown www-data:www-data /var/www/inception/wp-content/uploads -R
 

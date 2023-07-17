@@ -11,7 +11,7 @@ mysql -e "GRANT ALL PRIVILEGES ON ${MDB_DBNAME}.* TO '${MDB_USER}'@'%';"
 
 mysql -e "FLUSH PRIVILEGES;"
 
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MDB_ROOT_PASS}';"
+mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('${MDB_ROOT_PASS}');"
 
 service mysql stop
 

@@ -6,3 +6,10 @@ networks
 docker network ls
 volumes
 docker volume ls
+
+sudo docker exec -it mariadb mysql -uroot -p
+SHOW DATABASES;
+use wordpress
+show tables;
+SHOW COLUMNS FROM yourTable;
+SELECT wp_users.user_login, wp_users.user_email, firstmeta.meta_value as first_name, lastmeta.meta_value as last_name FROM wp_users left join wp_usermeta as firstmeta on wp_users.ID = firstmeta.user_id and firstmeta.meta_key = 'first_name' left join wp_usermeta as lastmeta on wp_users.ID = lastmeta.user_id and lastmeta.meta_key = 'last_name';

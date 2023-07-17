@@ -1,13 +1,13 @@
-all: build
+all: init build
+
+init:
 	mkdir -p /home/aradice/data/wordpress
 	mkdir -p /home/aradice/data/mariadb
 
 build:
 	docker-compose -f srcs/docker-compose.yml up -d --build 
 
-up:
-	mkdir -p /home/aradice/data/wordpress
-	mkdir -p /home/aradice/data/mariadb
+up: init
 	docker-compose -f srcs/docker-compose.yml up -d
 
 down:
@@ -21,5 +21,11 @@ fclean:
 	docker system prune -f
 	sudo rm -rf /home/aradice/data/wordpress
 	sudo rm -rf /home/aradice/data/mariadb
+
+display:
+	docker ps
+	docker images
+	docker network ls
+	docker volume ls
 
 .PHONY:	all up down fclean
